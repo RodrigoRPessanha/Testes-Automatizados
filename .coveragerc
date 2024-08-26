@@ -1,0 +1,8 @@
+# .coveragerc
+
+[run]
+# Omitir arquivos específicos da cobertura
+omit =
+    */__init__.py
+    app\main.py
+    */test_*
