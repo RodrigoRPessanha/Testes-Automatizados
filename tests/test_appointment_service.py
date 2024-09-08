@@ -59,7 +59,7 @@ def test_add_appointment_missing_doctor_id(monkeypatch):
     service = AppointmentService(repository_mock)
 
     invalid_appointment = Appointment(id=1, doctor_id=1, patient_id=1, date=datetime.now())
-    invalid_appointment.doctor_id = None  # Bypass Pydantic validation
+    invalid_appointment.doctor_id = None
     
     with pytest.raises(ValueError) as excinfo:
         service.add_appointment(invalid_appointment)
@@ -70,7 +70,7 @@ def test_add_appointment_missing_patient_id(monkeypatch):
     service = AppointmentService(repository_mock)
 
     invalid_appointment = Appointment(id=1, doctor_id=1, patient_id=1, date=datetime.now())
-    invalid_appointment.patient_id = None  # Bypass Pydantic validation
+    invalid_appointment.patient_id = None
     
     with pytest.raises(ValueError) as excinfo:
         service.add_appointment(invalid_appointment)
@@ -81,7 +81,7 @@ def test_add_patient_invalid_name(monkeypatch):
     service = PatientService(repository_mock)
 
     invalid_patient = Patient(id=1, name="John Doe", age=30)
-    invalid_patient.name = ""  # Bypass Pydantic validation
+    invalid_patient.name = "" 
     
     with pytest.raises(ValueError) as excinfo:
         service.add_patient(invalid_patient)
@@ -92,7 +92,7 @@ def test_add_patient_invalid_age(monkeypatch):
     service = PatientService(repository_mock)
 
     invalid_patient = Patient(id=1, name="John Doe", age=30)
-    invalid_patient.age = -1  # Bypass Pydantic validation
+    invalid_patient.age = -1 
     
     with pytest.raises(ValueError) as excinfo:
         service.add_patient(invalid_patient)

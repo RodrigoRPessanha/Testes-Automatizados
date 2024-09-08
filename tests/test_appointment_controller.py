@@ -2,7 +2,6 @@ import pytest
 from unittest.mock import Mock
 from fastapi.testclient import TestClient
 from app.main import app
-from app.repositories.appointment_repository import AppointmentRepository
 from app.services.appointment_service import AppointmentService
 from app.entities.appointment import Appointment
 from datetime import datetime
@@ -21,13 +20,9 @@ def test_add_appointment_successful(monkeypatch):
     mock_service.add_appointment.assert_called_once()
 
 def test_add_appointment_invalid_data(monkeypatch):
-    repository_mock = Mock(AppointmentRepository)
-    service = AppointmentService(repository_mock)
-
-    # Não precisa simular erro aqui, porque o erro virá da validação do Pydantic
     response = client.post("/appointments/", json={"id": 1, "doctor_id": 0, "patient_id": 1, "date": None})
 
-    assert response.status_code == 422  # Unprocessable Entity
+    assert response.status_code == 422
     assert "detail" in response.json()
     assert isinstance(response.json()["detail"], list)
     assert len(response.json()["detail"]) > 0

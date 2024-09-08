@@ -55,7 +55,7 @@ def test_add_doctor_invalid_name(monkeypatch):
     service = DoctorService(repository_mock)
 
     invalid_doctor = Doctor(id=1, name="Dr. Smith", specialty="Cardiology")
-    invalid_doctor.name = ""  # Bypass Pydantic validation
+    invalid_doctor.name = ""  
     
     with pytest.raises(ValueError) as excinfo:
         service.add_doctor(invalid_doctor)
@@ -66,7 +66,7 @@ def test_add_doctor_invalid_specialty(monkeypatch):
     service = DoctorService(repository_mock)
 
     invalid_doctor = Doctor(id=1, name="Dr. Smith", specialty="Cardiology")
-    invalid_doctor.specialty = ""  # Bypass Pydantic validation
+    invalid_doctor.specialty = ""
     
     with pytest.raises(ValueError) as excinfo:
         service.add_doctor(invalid_doctor)

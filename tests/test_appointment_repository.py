@@ -6,14 +6,12 @@ from datetime import datetime
 
 @pytest.fixture
 def db_connection():
-    # Cria uma conexão com o banco de dados em memória
     connection = sqlite3.connect(":memory:")
     yield connection
     connection.close()
 
 @pytest.fixture
 def appointment_repository(db_connection):
-    # Usa a conexão com o banco de dados em memória para criar o repositório
     return AppointmentRepository(db_path=":memory:")
 
 def test_add_appointment(appointment_repository):
@@ -65,12 +63,9 @@ def test_get_appointments_by_patient_id(appointment_repository):
     assert appointment3 not in found_appointments
 
 def test_close_connection(appointment_repository):
-    # Garanta que a conexão está aberta antes de fechar
     assert appointment_repository.connection is not None
 
-    # Fechar a conexão
     appointment_repository.close()
 
-    # Tentar usar a conexão depois de fechá-la deve gerar um erro
     with pytest.raises(sqlite3.ProgrammingError):
         appointment_repository.connection.execute("SELECT 1")

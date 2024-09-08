@@ -23,7 +23,7 @@ def test_add_doctor_invalid_data(monkeypatch):
 
     response = client.post("/doctors/", json={"id": 1, "name": "", "specialty": ""})
 
-    assert response.status_code == 422  # 422 Unprocessable Entity
+    assert response.status_code == 422
     assert "detail" in response.json()
     assert isinstance(response.json()["detail"], list)
     assert len(response.json()["detail"]) > 0
