@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
+from typing import Optional
 
 class Appointment(BaseModel):
-    id: int
+    id: Optional[int] = None
     doctor_id: int = Field(..., gt=0)
     patient_id: int = Field(..., gt=0)
     date: datetime
