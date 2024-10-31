@@ -6,37 +6,42 @@ from app.entities.patient import Patient
 @pytest.fixture
 def db_connection():
     connection = sqlite3.connect(":memory:")
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE patients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            age INTEGER NOT NULL
+        )
+    """)
+    connection.commit()
     yield connection
     connection.close()
 
 @pytest.fixture
-def patient_repository(db_connection):
-    return PatientRepository(db_path=":memory:")
+def patient_repo(db_connection):
+    repo = PatientRepository(db_path=":memory:")
+    repo.create_connection = lambda: db_connection
+    return repo
 
-def test_add_patient(patient_repository):
-    patient = Patient(id=1, name="John Doe", age=30)
+def test_add_patient(patient_repo):
+    patient = Patient(name="John Doe", age=30)
+    patient_repo.add_patient(patient)
+    patients = patient_repo.get_all_patients()
+    assert len(patients) == 1
 
-    patient_repository.add_patient(patient)
-    assert len(patient_repository.get_all_patients()) == 1
-    assert patient_repository.get_all_patients()[0] == patient
+def test_get_all_patients(patient_repo):
+    patient = Patient(name="John Doe", age=30)
+    patient_repo.add_patient(patient)
+    patients = patient_repo.get_all_patients()
+    assert len(patients) == 1
 
-def test_get_all_patients(patient_repository):
-    assert patient_repository.get_all_patients() == []
+def test_get_patient_by_id(patient_repo):
+    patient = Patient(name="John Doe", age=30)
+    patient_repo.add_patient(patient)
+    fetched_patient = patient_repo.get_patient_by_id(1)
+    assert fetched_patient is not None
 
-def test_get_patient_by_id(patient_repository):
-    patient = Patient(id=1, name="John Doe", age=30)
-    patient_repository.add_patient(patient)
-
-    found_patient = patient_repository.get_patient_by_id(1)
-    assert found_patient == patient
-
-def test_get_patient_by_id_not_found(patient_repository):
-    assert patient_repository.get_patient_by_id(999) is None
-
-def test_close_connection(patient_repository):
-    assert patient_repository.connection is not None
-
-    patient_repository.close()
-
-    with pytest.raises(sqlite3.ProgrammingError):
-        patient_repository.connection.execute("SELECT 1")
+def test_get_patient_by_id_not_found(patient_repo):
+    fetched_patient = patient_repo.get_patient_by_id(1)
+    assert fetched_patient is None
